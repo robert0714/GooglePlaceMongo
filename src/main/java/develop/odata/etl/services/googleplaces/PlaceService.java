@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +54,14 @@ public class PlaceService {
 							PlaceDetailsResponse.class, searchId, apiKey, lang);
 					if (response.getResult() != null) {
 						return response.getResult();
-					} else {
-						throw new Exception("Unable to find details for placeid: " + searchId);
+					} else if (StringUtils.isNotBlank(response.getErrorMessage())){
+						
+						LOGGER.warn("**{}**{} ** : Unable to find details for placeid: {}" ,response.getStatus() ,response.getErrorMessage() ,searchId);
+					}else {
+						throw new RuntimeException("Unable to find details for placeid: " + searchId);
 					}
+					
+					return null;
 				}
 			});
 
@@ -70,11 +76,7 @@ public class PlaceService {
 
 	public void setApiKey(String apiKey) {
 		this.apiKey = apiKey;
-	}
-
-//	public void setLanguage(String language) {
-//		this.language = language;
-//	}
+	} 
 
 	public void setRestTemplate(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
