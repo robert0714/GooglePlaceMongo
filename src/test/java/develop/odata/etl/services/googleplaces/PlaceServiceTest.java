@@ -19,8 +19,7 @@ public class PlaceServiceTest {
 	public void setUp() throws Exception {
 		this. placeService = new PlaceService(); 
 		this. placeService.setRestTemplate(new RestTemplate());
-		this. placeService.setApiKey("AIzaSyDi8JIfB0JBBgr830O1hyezWy0Uuj0ncOI");
-		this. placeService.setLanguage("zh-TW"); 
+		this. placeService.setApiKey("AIzaSyDi8JIfB0JBBgr830O1hyezWy0Uuj0ncOI"); 
 	}
 
 	@After
@@ -29,7 +28,7 @@ public class PlaceServiceTest {
 
 	@Test
 	public void testGetPlaceDetails() throws Exception {
-		PlaceDetails place = this. placeService.getPlaceDetails("ChIJYRhVuXL3ZzQRpDbHe2NGvyI");
+		PlaceDetails place = this. placeService.getPlaceDetails("ChIJYRhVuXL3ZzQRpDbHe2NGvyI","zh-TW");
 		System.out.println(place);	
 	}
 

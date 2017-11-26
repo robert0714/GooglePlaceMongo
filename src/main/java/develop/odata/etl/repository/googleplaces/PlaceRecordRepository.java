@@ -10,13 +10,19 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 import develop.odata.etl.model.googleplaces.PlaceRecord;
 
+import develop.odata.etl.model.googleplaces.PlaceCompositeKey;;
+
 @RepositoryRestResource(collectionResourceRel = "place", path = "place")
-public interface PlaceRecordRepository  extends MongoRepository<PlaceRecord, String> {
-	public PlaceRecord findByPlaceId(@Param("placeId") String placeId);
+public interface PlaceRecordRepository  extends MongoRepository<PlaceRecord, PlaceCompositeKey> {
+	
+	public PlaceRecord findById(  PlaceCompositeKey id);
     
-    public List<PlaceRecord> updateTimeGreaterThanEqual(@Param("updateTime") Date d1  );
-    
+    public List<PlaceRecord> updateTimeGreaterThanEqual(@Param("updateTime") Date d1  );  
     
     public List<PlaceRecord> updateTimeBetween(@Param("updateTime") Date d1 ,@Param("updateTime") Date d2  );
+    
+    public List<PlaceRecord> findByIdAndUpdateTimeBetween( PlaceCompositeKey id ,   Date updateTime , Date d2  );
+    
+    public List<PlaceRecord> findByIdAndUpdateTimeGreaterThanEqual( PlaceCompositeKey id ,   Date updateTime   );
     
 }

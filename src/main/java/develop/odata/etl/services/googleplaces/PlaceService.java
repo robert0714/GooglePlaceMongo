@@ -21,6 +21,7 @@ import develop.odata.etl.model.googleplaces.PlaceRecord;
 import develop.odata.etl.model.googleplaces.mappings.PlaceDetails;
 import develop.odata.etl.model.googleplaces.mappings.PlaceDetailsResponse;
 import develop.odata.etl.repository.googleplaces.PlaceRecordRepository;
+import develop.odata.etl.model.googleplaces. PlaceCompositeKey;;
 
 @Component
 public class PlaceService {
@@ -33,8 +34,8 @@ public class PlaceService {
 	@Value("${api.key}")
 	private String apiKey;
 
-	// @Value("${api.language}")
-	private String language;
+//	// @Value("${api.language}")
+//	private String language;
 
 	@Autowired
 	PlaceRecordRepository repository;
@@ -42,12 +43,14 @@ public class PlaceService {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	private LoadingCache<String, PlaceDetails> placeDetails = CacheBuilder.newBuilder().maximumSize(1000)
-			.expireAfterAccess(24, TimeUnit.HOURS).build(new CacheLoader<String, PlaceDetails>() {
+	private LoadingCache<String[], PlaceDetails> placeDetails = CacheBuilder.newBuilder().maximumSize(1000)
+			.expireAfterAccess(24, TimeUnit.HOURS).build(new CacheLoader<String[], PlaceDetails>() {
 				@Override
-				public PlaceDetails load(String searchId) throws Exception {
+				public PlaceDetails load(String[] searchData) throws Exception {
+					final String searchId = searchData[0];
+					final String lang = searchData[1];
 					PlaceDetailsResponse response = restTemplate.getForObject(PLACE_DETAILS_URL,
-							PlaceDetailsResponse.class, searchId, apiKey, language);
+							PlaceDetailsResponse.class, searchId, apiKey, lang);
 					if (response.getResult() != null) {
 						return response.getResult();
 					} else {
@@ -56,9 +59,9 @@ public class PlaceService {
 				}
 			});
 
-	public PlaceDetails getPlaceDetails(String searchId) {
+	public PlaceDetails getPlaceDetails(String searchId,String language) {
 		try {
-			return placeDetails.get(searchId);
+			return placeDetails.get(new String[] {searchId,language});
 		} catch (ExecutionException e) {
 			LOGGER.warn("An exception occurred while " + "fetching place details!", e.getCause());
 			return null;
@@ -69,9 +72,9 @@ public class PlaceService {
 		this.apiKey = apiKey;
 	}
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+//	public void setLanguage(String language) {
+//		this.language = language;
+//	}
 
 	public void setRestTemplate(RestTemplate restTemplate) {
 		this.restTemplate = restTemplate;
@@ -81,17 +84,26 @@ public class PlaceService {
 		this.repository = repository;
 	}
 
-	public PlaceRecord findByPlaceId(@Param("placeId") String placeId) {
-		return this.repository.findByPlaceId(placeId);
+	public PlaceRecord findById(  String placeId, String lang) {
+		return this.repository.findById(new PlaceCompositeKey (placeId,lang));
 	}
 
-	public List<PlaceRecord> finadByupdateTimeGreaterThanEqual(@Param("updateTime") Date d1) {
+	public List<PlaceRecord> findByUpdateTimeGreaterThanEqual(@Param("updateTime") Date d1) {
 		return this.repository.updateTimeGreaterThanEqual(d1);
 	}
 
-	public List<PlaceRecord> finadByupdateTimeBetween(@Param("updateTime") Date d1, @Param("updateTime") Date d2) {
+	public List<PlaceRecord> findByUpdateTimeBetween(@Param("updateTime") Date d1, @Param("updateTime") Date d2) {
 		return this.repository.updateTimeBetween(d1, d2);
 	}
+	
+	public List<PlaceRecord> findByIdAndUpdateTimeGreaterThanEqual( PlaceCompositeKey id ,   Date updateTime   ){
+		return this.repository.findByIdAndUpdateTimeGreaterThanEqual( id ,   updateTime   );
+	}
+
+	public List<PlaceRecord> findAll() {
+		return this.repository.findAll();
+	}
+	
 	public PlaceRecord saveOrUpdate(PlaceRecord placeRecord) {
 		return this.repository.save(placeRecord );
 	}
