@@ -25,13 +25,14 @@ public class DailyJobTest {
 	}
 
 	@Test
+	@Ignore
 	public void testProcessCatchData() throws Exception {
 		job.processCatchData();
 		;
 	}
 
 	@Test
-	@Ignore
+//	@Ignore
 	public void testExportFile() throws Exception {
 		job.exportFile();
 	}

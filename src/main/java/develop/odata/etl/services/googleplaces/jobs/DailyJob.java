@@ -13,7 +13,8 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat; 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.List; 
+import java.util.List;
+import java.util.UUID;
 import java.io.BufferedOutputStream; 
 
 
@@ -82,7 +83,7 @@ public class DailyJob {
 		List<String> placeIds = FileUtils.readLines(new File(new URI(source)));
 		Date beforeDay = DateUtils.addDays(new Date(), -beforeDays);		 
 		int scpoelimit = limit.intValue()/langTypes.length;		
-		for (int i = 0 ; i< scpoelimit ;i++) {
+		for (int i = 0 ; i< scpoelimit && i< placeIds.size();i++) {
 			final	String placeId = placeIds.get(i);
 			for(String lang :langTypes ) {
 				
@@ -161,8 +162,14 @@ public class DailyJob {
 			if (!langD.exists()) {
 				langD.mkdir();
 			}
-			
-			File resultFile = new File(langD.getAbsolutePath() ,record.getId().getPlaceId() );
+			String fileName =null;
+			if(record.getId().getPlaceId().length() < 29) {
+				fileName =record.getId().getPlaceId() ;
+			}else {
+				//檔名長度超過28字元無法存檔，所以乾脆把後面截掉
+				fileName = StringUtils.substring(record.getId().getPlaceId(), 0, 28);
+			}
+			File resultFile = new File(langD.getAbsolutePath() ,fileName );
 			this.mapper.writeValue(resultFile, record.getData());
 			iterator.remove();
 			 
