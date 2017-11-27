@@ -113,8 +113,18 @@ public class DailyJob {
 		List<PlaceRecord> found = service.findByIdAndUpdateTimeGreaterThanEqual(id, beforeDay);
 		if (CollectionUtils.isEmpty(found)) {
 			// 找不到所以可以連到google抓資料並且存檔
-			PlaceDetails place = service.getPlaceDetails(placeId, lang);
-
+			PlaceDetails place = null;
+			
+			try {
+				place = service.getPlaceDetails(placeId, lang);
+			} catch (Exception e) {
+				LOGGER.error("placeId: {}  has problem!!! }", placeId );;
+			}
+			if(place == null ) {
+				//google place api回報查無資料 ，跳到下一個
+				return true ;
+			}
+			
 			PlaceRecord record;
 			if (!StringUtils.equals(placeId, place.getPlaceId())) {
 				LOGGER.error("placeId is not constraint with data: {} ,{}", placeId, place.getPlaceId());

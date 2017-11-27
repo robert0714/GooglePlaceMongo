@@ -86,7 +86,11 @@ public class PlaceService {
 				return null;
 			}
 
-		} else {
+		} else if (StringUtils.isNotBlank(response.getStatus())){
+			LOGGER.warn("**{}**{} ** api key:{} : Unable to find details for placeid: {}", response.getStatus(),
+					response.getErrorMessage(),apiKey, searchId);
+			return null;
+		}else {
 			throw new RuntimeException("Unable to find details for placeid: " + searchId);
 		}
 	}
