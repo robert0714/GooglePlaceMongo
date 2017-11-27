@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +33,9 @@ public class PlaceService {
 	private static final String PLACE_DETAILS_URL = "https://maps.googleapis.com/"
 			+ "maps/api/place/details/json?placeid=" + "{searchId}&sensor=false&key={key}&language={language}";
 
-	@Value("${api.key}")
-	private String apiKey;
-
-//	// @Value("${api.language}")
-//	private String language;
+	@Value("${api.keys}")
+	private String[] apiKeys;
+ 
 
 	@Autowired
 	PlaceRecordRepository repository;
@@ -50,20 +49,48 @@ public class PlaceService {
 				public PlaceDetails load(String[] searchData) throws Exception {
 					final String searchId = searchData[0];
 					final String lang = searchData[1];
-					PlaceDetailsResponse response = restTemplate.getForObject(PLACE_DETAILS_URL,
-							PlaceDetailsResponse.class, searchId, apiKey, lang);
-					if (response.getResult() != null) {
-						return response.getResult();
-					} else if (StringUtils.isNotBlank(response.getErrorMessage())){
-						
-						LOGGER.warn("**{}**{} ** : Unable to find details for placeid: {}" ,response.getStatus() ,response.getErrorMessage() ,searchId);
-					}else {
-						throw new RuntimeException("Unable to find details for placeid: " + searchId);
-					}
 					
-					return null;
+					return findPlaceByReplaceApiKey (searchId,   lang);
 				}
 			});
+	
+	
+	/**
+	 * Replace api key.key有每日使用次數1000的限制。
+	 *
+	 * @param searchId the search id
+	 * @param lang the lang
+	 * @return the place details
+	 * @throws ExecutionException the execution exception
+	 */
+	protected PlaceDetails findPlaceByReplaceApiKey(final String searchId, final String lang) throws ExecutionException {
+		String apiKey = getAvailableKey();
+		if(apiKey ==null ) {
+			LOGGER.warn("You have no available apikeys({}) : Unable to find details for placeid: {}",apiKeys,  searchId);
+			return null;
+		}
+		
+		PlaceDetailsResponse response = restTemplate.getForObject(PLACE_DETAILS_URL, PlaceDetailsResponse.class,
+				searchId, apiKey, lang);
+		if (response.getResult() != null) {
+			return response.getResult();
+		} else if (StringUtils.isNotBlank(response.getErrorMessage())) {
+			LOGGER.warn("**{}**{} ** api key:{} : Unable to find details for placeid: {}", response.getStatus(),
+					response.getErrorMessage(),apiKey, searchId);
+			dailyExpiredKeys.put(apiKey, true);
+			apiKey = getAvailableKey();
+			if (apiKey != null) {
+				return findPlaceByReplaceApiKey(searchId, lang);
+			} else {
+				LOGGER.warn("You have no available apikeys ({}) : Unable to find details for placeid: {}", apiKeys, searchId);
+				return null;
+			}
+
+		} else {
+			throw new RuntimeException("Unable to find details for placeid: " + searchId);
+		}
+	}
+	
 
 	public PlaceDetails getPlaceDetails(String searchId,String language) {
 		try {
@@ -74,8 +101,33 @@ public class PlaceService {
 		}
 	}
 
-	public void setApiKey(String apiKey) {
-		this.apiKey = apiKey;
+	protected LoadingCache<String, Boolean> dailyExpiredKeys = CacheBuilder.newBuilder().maximumSize(1000)
+			.expireAfterAccess(24, TimeUnit.HOURS).build(new CacheLoader<String, Boolean>() {
+				@Override
+				public Boolean load(String key) throws Exception {
+
+					return false;
+				}
+			});
+	
+	protected String getAvailableKey() throws ExecutionException {
+		String result =null ; 
+		int index = ArrayUtils.getLength(this.apiKeys);
+		for (int i = 0; i < index; ++i) {
+			String key = this.apiKeys[i];
+			Boolean isExpired = dailyExpiredKeys.get(key);
+			if(isExpired) {
+				continue;
+			}else{
+				return  key ;
+			}
+		}
+		
+		return result;
+	} 
+
+	public void setApiKeys(String... apiKeys) {
+		this.apiKeys = apiKeys;
 	} 
 
 	public void setRestTemplate(RestTemplate restTemplate) {

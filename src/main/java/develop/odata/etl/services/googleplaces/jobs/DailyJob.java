@@ -95,8 +95,19 @@ public class DailyJob {
 		}		
 	}
 
+	/**
+	 * Process catch data unit. 跳過不處理，則回傳true ,要處理者回傳false
+	 *
+	 * @param beforeDay the before day
+	 * @param placeId the place id
+	 * @param lang the lang
+	 * @return true, if successful
+	 */
 	protected boolean processCatchDataUnit( final Date beforeDay, final String placeId, final String lang) {
 		boolean result =false ;
+		if(StringUtils.isBlank(placeId)) {
+			return true ;
+		}
 		PlaceCompositeKey id = new PlaceCompositeKey(placeId, lang);
 		// 如果找到資料還是在有效期間，就不連到google抓資料！
 		List<PlaceRecord> found = service.findByIdAndUpdateTimeGreaterThanEqual(id, beforeDay);

@@ -19,7 +19,7 @@ public class PlaceServiceTest {
 	public void setUp() throws Exception {
 		this. placeService = new PlaceService(); 
 		this. placeService.setRestTemplate(new RestTemplate());
-		this. placeService.setApiKey("AIzaSyDi8JIfB0JBBgr830O1hyezWy0Uuj0ncOI"); 
+		this. placeService.setApiKeys("AIzaSyDi8JIfB0JBBgr830O1hyezWy0Uuj0ncOI"); 
 	}
 
 	@After
