@@ -70,6 +70,80 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.jolokia</groupId>
+				<artifactId>docker-maven-plugin</artifactId>
+				<version>0.13.9</version>
+				<configuration>
+					<images>
+						<image>
+							<name>${docker.repository.name}:${project.version}</name>
+							<alias>${project.artifactId}</alias>
+
+							<build>
+								<from>java:8-jre</from>
+								<maintainer>sourabhh</maintainer>
+								<assembly>
+									<descriptor>docker-assembly.xml</descriptor>
+								</assembly>
+								<ports>
+									<port>8080</port>
+								</ports>
+								<cmd>
+									<shell>java -jar \
+										/maven/${project.build.finalName}.jar server \
+										/maven/docker-config.yml</shell>
+								</cmd>
+							</build>
+							<run>
+								<namingStrategy>alias</namingStrategy>
+								<ports>
+									<port>${docker.port}:8080</port>
+								</ports>
+								<volumes>
+									<bind>
+										<volume>${user.home}/logs:/logs</volume>
+									</bind>
+								</volumes>
+								<wait>
+									<url>http://${docker.host.address}:${docker.port}/v1/user/1</url>
+									<time>100000</time>
+								</wait>
+								<log>
+									<prefix>${project.artifactId}</prefix>
+									<color>cyan</color>
+								</log>
+							</run>
+						</image>
+					</images>
+				</configuration>
+			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-failsafe-plugin</artifactId> -->
+<!-- 				<configuration> -->
+<!-- 					<phase>integration-test</phase> -->
+<!-- 					<groups>com.packtpub.mmj.restaurant.resources.user.DockerIntegrationTest</groups> -->
+<!-- 					<systemPropertyVariables> -->
+<!-- 						<service.url>http://${docker.host.address}:${docker.port}/</service.url> -->
+<!-- 					</systemPropertyVariables> -->
+<!-- 				</configuration> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<goals> -->
+<!-- 							<goal>integration-test</goal> -->
+<!-- 							<goal>verify</goal> -->
+<!-- 						</goals> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
+<!-- 				<artifactId>maven-surefire-plugin</artifactId> -->
+<!-- 				<configuration> -->
+<!-- 					<excludedGroups>com.packtpub.mmj.user.resources.docker.DockerIntegrationTest</excludedGroups> -->
+<!-- 				</configuration> -->
+<!-- 			</plugin> -->
 		</plugins>
 	</build>
 

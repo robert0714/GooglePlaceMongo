@@ -2,6 +2,7 @@ package develop.odata.etl.services.googleplaces;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith; 
 import org.mockito.runners.MockitoJUnitRunner;
@@ -27,6 +28,7 @@ public class PlaceServiceTest {
 	}
 
 	@Test
+	@Ignore
 	public void testGetPlaceDetails() throws Exception {
 		PlaceDetails place = this. placeService.getPlaceDetails("ChIJYRhVuXL3ZzQRpDbHe2NGvyI","zh-TW");
 		System.out.println(place);	

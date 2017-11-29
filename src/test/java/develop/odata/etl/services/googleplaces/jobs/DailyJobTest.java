@@ -32,7 +32,7 @@ public class DailyJobTest {
 	}
 
 	@Test
-//	@Ignore
+	@Ignore
 	public void testExportFile() throws Exception {
 		job.exportFile();
 	}
