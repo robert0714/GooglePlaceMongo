@@ -10,6 +10,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<!-- windows要先安裝Docker-toolbox -->
 		<!-- mvn docker:help -->
 		<!-- docker-machine rm default -->
 		<!-- docker-machine create  /-/-virtualbox-memory 4096 default  -->
