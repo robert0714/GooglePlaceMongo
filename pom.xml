@@ -3,13 +3,25 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.packtpub.mongo.chapter6</groupId>
-	<artifactId>GooglePlaceMongo</artifactId>
+	<artifactId>google-place-mongo</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
+		<!-- mvn docker:help -->
+		<!-- docker-machine rm default -->
+		<!-- docker-machine create  /-/-virtualbox-memory 4096 default  -->
+		<!-- eval $( docker-machine env  default )  -->
+		<!-- mvn clean package docker:build -->
+		<!-- mvn docker:start -->
+		<!-- For Docker hub leave empty; use "localhost:5000/" for a local Docker 
+			Registry -->
+		<docker.registry.name>localhost:5000/</docker.registry.name>
+		<docker.repository.name>${docker.registry.name}robert0714/${project.artifactId}</docker.repository.name>
+		<docker.host.address>192.168.99.100</docker.host.address>
+		<docker.port>8080</docker.port>
 	</properties>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -81,8 +93,10 @@
 							<alias>${project.artifactId}</alias>
 
 							<build>
-								<from>java:8-jre</from>
-								<maintainer>sourabhh</maintainer>
+								<from>sdorra/oracle-java-8:8u151</from>
+								<maintainer>sdorra</maintainer>
+<!-- 								<from>java:8-jre</from> -->
+<!--                                 <maintainer>sourabhh</maintainer> -->
 								<assembly>
 									<descriptor>docker-assembly.xml</descriptor>
 								</assembly>
@@ -106,7 +120,7 @@
 									</bind>
 								</volumes>
 								<wait>
-									<url>http://${docker.host.address}:${docker.port}/v1/user/1</url>
+									<url>http://${docker.host.address}:${docker.port}/profile/place</url>
 									<time>100000</time>
 								</wait>
 								<log>
@@ -118,32 +132,32 @@
 					</images>
 				</configuration>
 			</plugin>
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-failsafe-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<phase>integration-test</phase> -->
-<!-- 					<groups>com.packtpub.mmj.restaurant.resources.user.DockerIntegrationTest</groups> -->
-<!-- 					<systemPropertyVariables> -->
-<!-- 						<service.url>http://${docker.host.address}:${docker.port}/</service.url> -->
-<!-- 					</systemPropertyVariables> -->
-<!-- 				</configuration> -->
-<!-- 				<executions> -->
-<!-- 					<execution> -->
-<!-- 						<goals> -->
-<!-- 							<goal>integration-test</goal> -->
-<!-- 							<goal>verify</goal> -->
-<!-- 						</goals> -->
-<!-- 					</execution> -->
-<!-- 				</executions> -->
-<!-- 			</plugin> -->
-<!-- 			<plugin> -->
-<!-- 				<groupId>org.apache.maven.plugins</groupId> -->
-<!-- 				<artifactId>maven-surefire-plugin</artifactId> -->
-<!-- 				<configuration> -->
-<!-- 					<excludedGroups>com.packtpub.mmj.user.resources.docker.DockerIntegrationTest</excludedGroups> -->
-<!-- 				</configuration> -->
-<!-- 			</plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-failsafe-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <phase>integration-test</phase> -->
+			<!-- <groups>com.packtpub.mmj.restaurant.resources.user.DockerIntegrationTest</groups> -->
+			<!-- <systemPropertyVariables> -->
+			<!-- <service.url>http://${docker.host.address}:${docker.port}/</service.url> -->
+			<!-- </systemPropertyVariables> -->
+			<!-- </configuration> -->
+			<!-- <executions> -->
+			<!-- <execution> -->
+			<!-- <goals> -->
+			<!-- <goal>integration-test</goal> -->
+			<!-- <goal>verify</goal> -->
+			<!-- </goals> -->
+			<!-- </execution> -->
+			<!-- </executions> -->
+			<!-- </plugin> -->
+			<!-- <plugin> -->
+			<!-- <groupId>org.apache.maven.plugins</groupId> -->
+			<!-- <artifactId>maven-surefire-plugin</artifactId> -->
+			<!-- <configuration> -->
+			<!-- <excludedGroups>com.packtpub.mmj.user.resources.docker.DockerIntegrationTest</excludedGroups> -->
+			<!-- </configuration> -->
+			<!-- </plugin> -->
 		</plugins>
 	</build>
 
