@@ -109,8 +109,8 @@
 									     <arg>-jar</arg>
 									     <arg>/maven/${project.build.finalName}.jar</arg>
 									     <arg>--java.security.egd=file:/dev/./urandom </arg>
-									     <arg>--spring.data.mongodb.host=192.168.7.240</arg>
-											<!-- ${MONGO_URL} -->
+									     <arg>--spring.data.mongodb.host=${MONGO_URL}</arg>
+									<!-- docker-compose  -f src/main/docker/docker-compose.yml up -d -->
 							   		</exec>	
 							   </cmd>							
 							</build>
