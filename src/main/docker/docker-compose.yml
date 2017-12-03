@@ -19,7 +19,7 @@ services:
   mongodb:
     container_name: robert-mongodb
     restart: always
-    image: bitnami/mongodb:latest
+    image: mongo:latest
     ports:
       - "27017:27017"    
     volumes:
