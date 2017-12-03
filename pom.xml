@@ -94,7 +94,7 @@
 							<external> 
 							     <type>compose</type> 
 							     <basedir>src/main/docker</basedir> 
-							     <composeFile>docker-compose.yml</composeFile>
+							     <composeFile>docker-compose-dev.yml</composeFile>
 							</external>
 							<build>
 								<from>sdorra/oracle-java-8:8u151</from>
