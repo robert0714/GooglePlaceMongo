@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+  mysqldb:
+    depends_on:
+      - mongodb
+    image: localhost:5000/robert0714/google-place-mongo:1.0-SNAPSHOT
+    volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - $PWD/poi/conf/source/placeIds:/root/poi/conf/source/placeIds
+    - $PWD/poi/output:/poi/output
+    environment:
+    - EXTRA_OPTS="--lower_case_table_names=1"
+    - TZ=Asia/Taipei
+    ports: 
+    - "8080:8080"
+  mongodb:
+    restart: always
+    image: bitnami/mongodb:latest
+    ports:
+    - "27017:27017"    
+    volumes:
+    - $PWD/data/mongodb:/bitnami/mongodb
+    environment:
+    - MONGODB_DATABASE=ec
