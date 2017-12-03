@@ -102,12 +102,17 @@
 								</assembly>
 								<ports>
 									<port>8080</port>
-								</ports>
-								<cmd>
-									<shell>java -jar \
-										/maven/${project.build.finalName}.jar server \
-										/maven/docker-config.yml</shell>
-								</cmd>
+								</ports>								
+							   <cmd>
+							        <exec>
+									     <arg>java</arg>
+									     <arg>-jar</arg>
+									     <arg>/maven/${project.build.finalName}.jar</arg>
+									     <arg>--java.security.egd=file:/dev/./urandom </arg>
+									     <arg>--spring.data.mongodb.host=192.168.7.240</arg>
+											<!-- ${MONGO_URL} -->
+							   		</exec>	
+							   </cmd>							
 							</build>
 							<run>
 								<namingStrategy>alias</namingStrategy>

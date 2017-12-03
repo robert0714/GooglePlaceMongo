@@ -7,11 +7,8 @@ package develop.odata.etl;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
-
-import develop.odata.etl.services.googleplaces.PlaceService;
-
-import java.util.Collection;
-
+ 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,9 +29,15 @@ public class MongoConfiguration extends AbstractMongoConfiguration {
 		return "springdata";
 	}
 
+	@Value("${spring.data.mongodb.host}")
+	private String host;
+	
+	@Value("${spring.data.mongodb.port}")
+	private Integer port; 
+	
 	@Override
 	public Mongo mongo() throws Exception {
-		return new MongoClient("127.0.0.1", 27017);
+		return new MongoClient(host, port);
 	}
 	@Bean
 	public RestTemplate getRest() {
