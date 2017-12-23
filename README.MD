@@ -8,3 +8,5 @@ docker-machine create  --virtualbox-memory 4096 default <br/>
 eval $( docker-machine env  default ) <br/>
 mvn clean package docker:build <br/>
 mvn docker:start <br/>
+docker run  --rm   -e spring.profiles.active=robert -e spring.data.mongodb.host=192.168.57.111  localhost:5000/robert0714/google-place-mongo:1.0-SNAPSHOT<br/>
+docker run  --rm    -e spring.data.mongodb.host=192.168.57.111  localhost:5000/robert0714/google-place-mongo:1.0-SNAPSHOT<br/>

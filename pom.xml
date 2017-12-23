@@ -91,11 +91,11 @@
 						<image>
 							<name>${docker.repository.name}:${project.version}</name>
 							<alias>${project.artifactId}</alias>
-							<external> 
-							     <type>compose</type> 
-							     <basedir>src/main/docker</basedir> 
-							     <composeFile>docker-compose-dev.yml</composeFile>
-							</external>
+<!-- 							<external>  -->
+<!-- 							     <type>compose</type>  -->
+<!-- 							     <basedir>src/main/docker</basedir>  -->
+<!-- 							     <composeFile>docker-compose-dev.yml</composeFile> -->
+<!-- 							</external> -->
 							<build>
 								<from>sdorra/oracle-java-8:8u151</from>
 								<maintainer>sdorra</maintainer>
